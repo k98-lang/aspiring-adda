@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Aspiring Adda | Career Pathways 2026</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Space Grotesk (Light Mode) & Outfit (Dark Mode) -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CDN (kept for simplicity, though a build step is preferred for prod) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Outfit', 'sans-serif'], // Dark Mode
+              brutal: ['Space Grotesk', 'sans-serif'], // Light Mode
+            },
+            animation: {
+              'nebula-float': 'nebula 20s infinite alternate',
+              'twinkle': 'twinkle 4s infinite ease-in-out',
+            },
+            keyframes: {
+              nebula: {
+                '0%': { transform: 'translate(0, 0) scale(1)' },
+                '100%': { transform: 'translate(30px, -20px) scale(1.1)' },
+              },
+              twinkle: {
+                '0%, 100%': { opacity: 0.4 },
+                '50%': { opacity: 1 },
+              }
+            },
+            colors: {
+              // LIGHT MODE PALETTE
+              'pop-yellow': '#FFD600',
+              'pop-purple': '#D6BCFA',
+              'pop-green': '#9AE6B4',
+              'pop-blue': '#90CDF4',
+              'pop-pink': '#FEB2B2',
+
+              // DARK MODE PALETTE (Nebula inspired)
+              'space-black': '#050508',
+              'nebula-gold': '#d4a353',
+              'nebula-teal': '#2dd4bf',
+              'nebula-void': '#0f172a',
+
+              // Map legacy names to new palette to prevent breaks if used elsewhere
+              'neo-yellow': '#FFD600',
+              'neo-purple': '#D6BCFA',
+              'neo-green': '#9AE6B4',
+              'neo-rose': '#FEB2B2',
+              'neo-blue': '#90CDF4',
+              linkedin: {
+                  800: '#0a66c2',
+                  700: '#004182'
+               }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* --- GLOBAL --- */
+      body {
+        transition: background-color 0.5s ease;
+        overflow-x: hidden;
+      }
+
+      /* LIGHT MODE */
+      body {
+        background-color: #fff;
+        background-image: radial-gradient(#000 1px, transparent 1px);
+        background-size: 24px 24px;
+        color: #000;
+        font-family: 'Space Grotesk', sans-serif;
+      }
+
+      /* DARK MODE: 3D NEBULA SPACE */
+      .dark body {
+        background-color: #050508;
+        background-image: none;
+        color: #e2e8f0;
+        font-family: 'Outfit', sans-serif;
+        perspective: 1000px;
+      }
+
+      /* Star Field */
+      .star-field {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: -2;
+        pointer-events: none;
+        background-image:
+            radial-gradient(1px 1px at 10% 10%, white, transparent),
+            radial-gradient(1px 1px at 20% 20%, white, transparent),
+            radial-gradient(2px 2px at 30% 30%, white, transparent),
+            radial-gradient(1px 1px at 40% 40%, white, transparent),
+            radial-gradient(2px 2px at 50% 50%, white, transparent),
+            radial-gradient(1px 1px at 60% 60%, white, transparent),
+            radial-gradient(2px 2px at 70% 70%, white, transparent),
+            radial-gradient(1px 1px at 80% 80%, white, transparent),
+            radial-gradient(1px 1px at 90% 90%, white, transparent);
+        background-size: 550px 550px;
+        opacity: 0.6;
+      }
+
+      /* Nebula Clouds */
+      .nebula-bg {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: -1;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .nebula-blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.5;
+        mix-blend-mode: screen;
+        animation: nebula-float 20s infinite ease-in-out alternate;
+      }
+
+      /* CARD STYLES */
+      .card-base {
+        border-radius: 12px;
+        transition: all 0.15s ease;
+      }
+
+      /* Light Mode Card (Default) */
+      .card-base {
+        background: white;
+        border: 2px solid black;
+        box-shadow: 6px 6px 0px 0px #000;
+      }
+      .card-base:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 10px 10px 0px 0px #000;
+      }
+      .card-base:active {
+        transform: translate(4px, 4px);
+        box-shadow: 0px 0px 0px 0px #000;
+      }
+
+      /* Dark Mode Glass Card (Overrides) */
+      .dark .card-base {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+        border-radius: 20px;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        transform-style: preserve-3d;
+        transition: transform 0.1s ease-out;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Glossy Reflection overlay */
+      .dark .card-base::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(125deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 40%);
+        opacity: 0.4;
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      .dark .card-base:hover {
+        transform: none;
+        border-color: rgba(212, 163, 83, 0.4); /* Nebula Gold */
+        box-shadow: 0 0 30px rgba(45, 212, 191, 0.15); /* Nebula Teal */
+      }
+
+      /* UTILITIES */
+      .text-stroke-black {
+        -webkit-text-stroke: 1px black;
+        color: transparent;
+      }
+      .no-tap-highlight { -webkit-tap-highlight-color: transparent; }
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar { width: 10px; }
+      ::-webkit-scrollbar-track { background: #000; }
+      ::-webkit-scrollbar-thumb { background: #000; border: 2px solid #fff; }
+      .dark ::-webkit-scrollbar-track { background: #050508; }
+      .dark ::-webkit-scrollbar-thumb { background: #d4a353; border: none; border-radius: 99px; }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.38.0",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="transition-colors duration-500 min-h-screen flex flex-col font-brutal dark:font-sans no-tap-highlight selection:bg-black selection:text-pop-yellow dark:selection:bg-nebula-teal dark:selection:text-black overflow-x-hidden">
+
+    <!-- DARK MODE BACKGROUNDS -->
+    <div class="hidden dark:block star-field" id="starField"></div>
+    <div class="hidden dark:block nebula-bg">
+        <!-- Gold Cloud (Left) -->
+        <div class="nebula-blob bg-[#d4a353] w-[600px] h-[600px] top-[-10%] left-[-10%] opacity-30"></div>
+        <!-- Deep Teal Cloud (Right) -->
+        <div class="nebula-blob bg-[#0f766e] w-[700px] h-[700px] bottom-[-10%] right-[-10%] opacity-40 animation-delay-2000"></div>
+        <!-- Bright Cyan Core (Center) -->
+        <div class="nebula-blob bg-[#2dd4bf] w-[400px] h-[400px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-20 animation-delay-4000"></div>
+    </div>
+
+    <div id="root" class="flex flex-col min-h-screen w-full relative z-10"></div>
+    <script type="module" src="./index.tsx"></script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
