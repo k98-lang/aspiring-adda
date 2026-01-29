@@ -4,10 +4,10 @@ import { useApp } from '../AppContext';
 import { DEEP_DIVES, SPECIALIZATIONS } from '../constants';
 import Button from '../components/Button';
 import { RoadmapStep } from '../types';
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 
 const Detail: React.FC = () => {
-  const { selectedSpecId, roadmapProgress, updateRoadmapProgress, navigate, findJobsForRole, setSearchTerm, isDark } = (useApp() as any);
+  const { selectedSpecId, roadmapProgress, updateRoadmapProgress, navigate, findJobsForRole, setSearchTerm, isDark, currentUser } = (useApp() as any);
   const [detailTab, setDetailTab] = useState<'roadmap' | 'dayInLife'>('roadmap');
   const [activeQuiz, setActiveQuiz] = useState<{
       specId: string;
@@ -31,49 +31,53 @@ const Detail: React.FC = () => {
   };
 
   const openQuiz = async (stepIndex: number) => {
+      if (!currentUser) {
+          navigate('login');
+          return;
+      }
+
       const step = data.roadmap[stepIndex];
       setGeneratingQuiz(true);
 
       try {
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-        const prompt = `Generate a short multiple-choice quiz (exactly 3 questions) to test a beginner's understanding of the topic: "${step.title}".
-        Context/Description: "${step.desc}".
+        const prompt = `
+        Create a multiple-choice quiz for: "${step.title}".
+        Description: "${step.desc}".
 
-        Return a valid JSON array of objects. Do not output markdown.
-        Schema:
+        TASK: Generate EXACTLY 3 questions.
+
+        OUTPUT FORMAT (JSON ONLY):
         [
           {
-            "q": "Question string",
+            "q": "Question (max 15 words)",
             "o": ["Option 1", "Option 2", "Option 3", "Option 4"],
-            "a": 0 // index of correct option (0-3)
+            "a": 0 // correct index
           }
-        ]`;
+        ]
+
+        RULES:
+        1. Keep it short and simple.
+        2. No Markdown. No Code Blocks. Raw JSON.
+        `;
 
         const response = await ai.models.generateContent({
             model: 'gemini-3-flash-preview',
             contents: prompt,
             config: {
                 responseMimeType: "application/json",
-                maxOutputTokens: 2000,
-                responseSchema: {
-                   type: Type.ARRAY,
-                   items: {
-                       type: Type.OBJECT,
-                       properties: {
-                           q: { type: Type.STRING },
-                           o: { type: Type.ARRAY, items: { type: Type.STRING } },
-                           a: { type: Type.NUMBER }
-                       }
-                   }
-                }
+                maxOutputTokens: 1000,
+                thinkingConfig: { thinkingBudget: 0 },
+                // Removed schema to prevent length overflow
             }
         });
 
         let cleanText = response.text?.trim() || "[]";
-        // Remove markdown code blocks if present
         cleanText = cleanText.replace(/^```json\s*/, '').replace(/^```\s*/, '').replace(/\s*```$/, '');
 
         const quizData = JSON.parse(cleanText);
+
+        if (!Array.isArray(quizData) || quizData.length === 0) throw new Error("Invalid Data");
 
         setActiveQuiz({
           specId: selectedSpecId!,
@@ -301,7 +305,8 @@ const Detail: React.FC = () => {
                         variant="primary"
                         onClick={() => {
                             navigate('jobs');
-                            setSearchTerm(data.role);
+                            // Ensure we search for the specific specialization name if available, otherwise fallback to role
+                            setSearchTerm(spec ? spec.name : data.role);
                         }}
                         className="bg-white text-black dark:bg-nebula-teal dark:text-black dark:shadow-none"
                     >

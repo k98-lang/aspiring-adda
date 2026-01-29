@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Search, X, Heart } from 'lucide-react';
+import { Search, X, Heart, ExternalLink } from 'lucide-react';
 import { useApp } from '../AppContext';
 import { AVAILABLE_SKILLS, SPECIALIZATIONS } from '../constants';
 import { Job } from '../types';
@@ -167,8 +167,8 @@ const Jobs: React.FC = () => {
               </div>
           )}
           {filteredJobs.map((job) => (
-              <div key={job.id} className="card-base p-6 flex items-center justify-between gap-6 group cursor-pointer bg-white hover:bg-gray-50 dark:bg-white/5 dark:hover:bg-white/10">
-                  <div className="flex items-center gap-5">
+              <div key={job.id} className="card-base p-6 flex flex-col sm:flex-row items-center justify-between gap-6 group bg-white hover:bg-gray-50 dark:bg-white/5 dark:hover:bg-white/10">
+                  <div className="flex items-center gap-5 w-full sm:w-auto">
                       <div className="w-16 h-16 bg-white border-2 border-black flex items-center justify-center dark:border-white/10 dark:bg-black dark:rounded-lg text-2xl font-black text-black dark:text-white relative overflow-hidden shrink-0 rounded-lg">
                           <span className="z-0">{job.company[0]}</span>
                           <img
@@ -187,9 +187,23 @@ const Jobs: React.FC = () => {
                           </div>
                       </div>
                   </div>
-                  <button onClick={() => toggleSaveJob(job.id)} className={`p-3 border-2 border-black bg-white hover:bg-red-500 hover:text-white transition-colors dark:border-white/10 dark:bg-transparent dark:hover:bg-red-900/20 dark:hover:text-red-500 dark:rounded-full ${savedJobs.has(job.id) ? 'bg-red-500 text-white dark:text-red-500' : 'text-black dark:text-gray-400'}`}>
-                      <Heart className={`w-5 h-5 ${savedJobs.has(job.id) ? 'fill-current' : ''}`} />
-                  </button>
+
+                  <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+                      <a
+                          href={`https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(`${job.title} ${job.company}`)}&location=${encodeURIComponent(job.loc)}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="px-4 py-2 border-2 border-black bg-blue-600 text-white font-bold hover:bg-blue-700 transition-colors dark:border-white/10 dark:bg-blue-600 dark:hover:bg-blue-500 dark:rounded-lg flex items-center gap-2 text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] dark:shadow-none"
+                      >
+                          Apply <ExternalLink className="w-3 h-3" />
+                      </a>
+                      <button
+                        onClick={() => toggleSaveJob(job.id)}
+                        className={`p-2 border-2 border-black bg-white hover:bg-red-500 hover:text-white transition-colors dark:border-white/10 dark:bg-transparent dark:hover:bg-red-900/20 dark:hover:text-red-500 dark:rounded-full ${savedJobs.has(job.id) ? 'bg-red-500 text-white dark:text-red-500' : 'text-black dark:text-gray-400'}`}
+                      >
+                          <Heart className={`w-5 h-5 ${savedJobs.has(job.id) ? 'fill-current' : ''}`} />
+                      </button>
+                  </div>
               </div>
           ))}
       </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { ArrowLeft, Trophy, RotateCcw, Settings, Play, Pause, Clock } from 'lucide-react';
+import { ArrowLeft, Trophy, RotateCcw, Settings, Play, Pause, Clock, Lock } from 'lucide-react';
 import { useApp } from '../AppContext';
 
 // --- CONFIGURATION & TYPES ---
@@ -111,7 +111,7 @@ interface Enemy {
 // --- REACT COMPONENT ---
 
 const Arcade: React.FC = () => {
-  const { navigate, isDark } = useApp();
+  const { navigate, isDark, currentUser } = useApp();
   const [activeGame, setActiveGame] = useState<string | null>(null);
   const [difficulty, setDifficulty] = useState<'easy'|'medium'|'hard'>('medium');
   const [highScores, setHighScores] = useState<Record<string, number>>({});
@@ -159,7 +159,10 @@ const Arcade: React.FC = () => {
             {GAMES.map(g => (
                 <div
                     key={g.id}
-                    onClick={() => setActiveGame(g.id)}
+                    onClick={() => {
+                        if (!currentUser) navigate('login');
+                        else setActiveGame(g.id);
+                    }}
                     className={`
                         group relative overflow-hidden p-6 rounded-3xl cursor-pointer
                         hover:-translate-y-2 transition-transform duration-300 flex flex-col justify-between h-96
@@ -167,6 +170,13 @@ const Arcade: React.FC = () => {
                         dark:hover:border-${g.theme}-500/50
                     `}
                 >
+                    {/* Lock Overlay if not logged in */}
+                    {!currentUser && (
+                        <div className="absolute top-4 right-4 z-20 bg-black/60 p-2 rounded-full border border-white/20 backdrop-blur-md">
+                            <Lock className="w-4 h-4 text-white" />
+                        </div>
+                    )}
+
                     {/* Dark Mode Gradient Overlay - Hidden in Light Mode */}
                     <div className={`absolute inset-0 bg-gradient-to-br ${g.gradient} to-black opacity-0 dark:opacity-100 transition-opacity`}></div>
 
@@ -190,7 +200,7 @@ const Arcade: React.FC = () => {
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white
                                 bg-black dark:bg-${g.theme}-600
                             `}>
-                                <Play className="w-4 h-4 fill-current" />
+                                {currentUser ? <Play className="w-4 h-4 fill-current" /> : <Lock className="w-4 h-4 fill-current" />}
                             </div>
                         </div>
                     </div>

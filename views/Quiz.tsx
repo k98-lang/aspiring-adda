@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Loader2, Lock } from 'lucide-react';
 import { useApp } from '../AppContext';
 import { QUIZ_LEVELS, SPECIALIZATIONS } from '../constants';
 import Button from '../components/Button';
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 
 type Stage = 'levels' | 'loading' | 'questions' | 'result';
 
 const Quiz: React.FC = () => {
-  const { navigate, setSelectedSpecId, lastQuizScore, setLastQuizScore, isDark } = useApp();
+  const { navigate, setSelectedSpecId, lastQuizScore, setLastQuizScore, isDark, currentUser } = useApp();
   const [stage, setStage] = useState<Stage>('levels');
   const [level, setLevel] = useState<string>('');
   const [questions, setQuestions] = useState<any[]>([]);
@@ -18,6 +18,11 @@ const Quiz: React.FC = () => {
   const [currentScore, setCurrentScore] = useState(0);
 
   const startLevel = async (lvl: string) => {
+      if (!currentUser) {
+          navigate('login');
+          return;
+      }
+
       setLevel(lvl);
       setStage('loading');
 
@@ -37,34 +42,36 @@ const Quiz: React.FC = () => {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
       const difficulty = prevScore === null
-        ? "balanced, exploratory"
+        ? "balanced"
         : prevScore < 50
-            ? "easier, fundamental concepts"
-            : "challenging, scenario-based";
+            ? "easy"
+            : "hard";
 
       // We provide the list of specs to the model so it knows valid IDs
-      const specList = SPECIALIZATIONS.map(s => `${s.id}: ${s.name}`).join(', ');
+      // Truncate list slightly to ensure we don't overwhelm context
+      const specList = SPECIALIZATIONS.map(s => `${s.id}`).join(',');
 
       const prompt = `
-          Generate exactly 3 career path discovery questions for a '${lvl}' level user.
-          The goal is to determine which tech/design specialization suits them best.
-          Context: The questions should be ${difficulty}.
+          Generate a career quiz for a '${lvl}' user.
+          Difficulty: ${difficulty}.
 
-          Use these Specialization IDs for mapping options: ${specList}.
+          TASK: Create EXACTLY 3 multiple-choice questions.
 
-          The output must be strictly JSON matching this structure:
+          OUTPUT FORMAT (JSON ONLY):
           [
             {
-              "question": "Question text",
+              "question": "Short question text (max 15 words)",
               "options": [
-                { "txt": "Option text", "spec": "Specialization_ID", "color": "Tailwind_Border_Color" }
+                { "txt": "Short answer (max 6 words)", "spec": "One_ID_From_List", "color": "border-neo-blue" }
               ]
             }
           ]
 
-          For "color", randomly select from: "border-neo-blue", "border-neo-green", "border-neo-yellow", "border-neo-rose", "border-neo-purple".
-
-          IMPORTANT: Return ONLY the JSON array. Do not generate more than 3 questions. Ensure the JSON is valid and closed.
+          RULES:
+          1. Use these IDs for 'spec': ${specList}
+          2. Randomly assign 'color' from: border-neo-blue, border-neo-green, border-neo-yellow, border-neo-rose, border-neo-purple.
+          3. Provide 4 options per question.
+          4. No Markdown. No Code Blocks. Just raw JSON.
       `;
 
       const response = await ai.models.generateContent({
@@ -72,27 +79,8 @@ const Quiz: React.FC = () => {
         contents: prompt,
         config: {
             responseMimeType: "application/json",
-            maxOutputTokens: 2000,
-            responseSchema: {
-                type: Type.ARRAY,
-                items: {
-                    type: Type.OBJECT,
-                    properties: {
-                        question: { type: Type.STRING },
-                        options: {
-                            type: Type.ARRAY,
-                            items: {
-                                type: Type.OBJECT,
-                                properties: {
-                                    txt: { type: Type.STRING },
-                                    spec: { type: Type.STRING },
-                                    color: { type: Type.STRING }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            maxOutputTokens: 1000,
+            thinkingConfig: { thinkingBudget: 0 },
         }
       });
 
@@ -101,11 +89,20 @@ const Quiz: React.FC = () => {
           // Remove markdown code blocks if present
           cleanText = cleanText.replace(/^```json\s*/, '').replace(/^```\s*/, '').replace(/\s*```$/, '');
 
-          const generatedQuestions = JSON.parse(cleanText);
-          setQuestions(generatedQuestions);
-          setStage('questions');
-          setCurrentStep(0);
-          setAnswers([]);
+          try {
+              const generatedQuestions = JSON.parse(cleanText);
+              if (Array.isArray(generatedQuestions) && generatedQuestions.length > 0) {
+                  setQuestions(generatedQuestions);
+                  setStage('questions');
+                  setCurrentStep(0);
+                  setAnswers([]);
+              } else {
+                  throw new Error("Invalid JSON structure");
+              }
+          } catch (e) {
+              console.error("JSON Parse Error", e);
+              throw new Error("Failed to parse AI response");
+          }
       } else {
           throw new Error("Empty AI response");
       }
@@ -130,9 +127,9 @@ const Quiz: React.FC = () => {
           candidates = Object.keys(counts).filter(s => counts[s] === max);
 
           // Calculate a mock "score" for the adaptive logic (consistency check)
-          const consistenyScore = (max / questions.length) * 100;
-          setCurrentScore(consistenyScore);
-          setLastQuizScore(consistenyScore);
+          const consistencyScore = (max / questions.length) * 100;
+          setCurrentScore(consistencyScore);
+          setLastQuizScore(consistencyScore);
 
           let final = candidates[0];
           const advancedRoles = ['s2', 's10', 's12', 's14', 's15', 's23', 's20', 's25', 's50', 's51', 's60', 's61'];
@@ -183,19 +180,26 @@ const Quiz: React.FC = () => {
             <p className="text-xl font-bold text-zinc-500 dark:text-gray-400 dark:font-normal mb-16">Choose your difficulty.</p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div onClick={() => startLevel('beginner')} className={`card-base p-10 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/10`}>
+                <div onClick={() => startLevel('beginner')} className={`card-base p-10 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/10 relative overflow-hidden group`}>
                     <h3 className="text-3xl font-black mb-2 uppercase text-black dark:text-white font-brutal dark:font-sans">Noob</h3>
                     <p className="text-sm font-bold text-black dark:text-gray-400">Just looking around.</p>
+                    {!currentUser && <div className="absolute top-4 right-4 text-black/50 dark:text-white/30"><Lock className="w-6 h-6" /></div>}
                 </div>
-                <div onClick={() => startLevel('intermediate')} className={`card-base p-10 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/10`}>
+                <div onClick={() => startLevel('intermediate')} className={`card-base p-10 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/10 relative overflow-hidden group`}>
                     <h3 className="text-3xl font-black mb-2 uppercase text-black dark:text-white font-brutal dark:font-sans">Pro</h3>
                     <p className="text-sm font-bold text-black dark:text-gray-400">Know the basics.</p>
+                    {!currentUser && <div className="absolute top-4 right-4 text-black/50 dark:text-white/30"><Lock className="w-6 h-6" /></div>}
                 </div>
-                <div onClick={() => startLevel('advanced')} className={`card-base p-10 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/10`}>
+                <div onClick={() => startLevel('advanced')} className={`card-base p-10 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/10 relative overflow-hidden group`}>
                     <h3 className="text-3xl font-black mb-2 uppercase text-black dark:text-white font-brutal dark:font-sans">God</h3>
                     <p className="text-sm font-bold text-black dark:text-gray-400">Here to dominate.</p>
+                    {!currentUser && <div className="absolute top-4 right-4 text-black/50 dark:text-white/30"><Lock className="w-6 h-6" /></div>}
                 </div>
             </div>
+
+            {!currentUser && (
+                <p className="mt-8 text-red-500 font-bold uppercase text-sm animate-pulse">Login required to start assessment</p>
+            )}
         </div>
       );
   }
