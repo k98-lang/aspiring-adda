@@ -1,4 +1,5 @@
 import React from 'react';
+import { MessageSquare } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
@@ -7,7 +8,10 @@ const Footer: React.FC = () => {
         <p>
           © 2026 <b>Aspiring Adda</b> Pro. All rights reserved.
         </p>
-        <div className="flex gap-6 mt-4 md:mt-0">
+        <div className="flex gap-6 mt-4 md:mt-0 items-center">
+           <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmhM2CPcf3tCXeR3XCL8IP7Z1Y_9F35OSuFDMPfnHzflhlDg/viewform" target="_blank" rel="noreferrer" className="hover:text-zinc-900 dark:hover:text-white transition-colors flex items-center gap-2 font-bold">
+             <MessageSquare className="w-3 h-3" /> Review Us
+          </a>
           <a href="#" className="hover:text-zinc-900 dark:hover:text-white transition-colors">
             Privacy
           </a>

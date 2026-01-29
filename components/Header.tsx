@@ -11,7 +11,8 @@ const Header: React.FC = () => {
     { id: 'home', label: 'Home' },
     { id: 'explore', label: 'Explore' },
     { id: 'jobs', label: 'Jobs' },
-    { id: 'soft-skills', label: 'Soft Skills' }
+    { id: 'soft-skills', label: 'Soft Skills' },
+    { id: 'team', label: 'My Team' }
   ];
 
   const handleNav = (id: string) => {
@@ -151,18 +152,6 @@ const Header: React.FC = () => {
             className="text-left px-4 py-4 font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-pop-purple text-black hover:shadow-none dark:bg-white/5 dark:border-white/10 dark:shadow-none dark:text-white dark:rounded-xl"
           >
             Break Room (Games)
-          </button>
-          <button
-            onClick={() => handleNav('team')}
-            className="text-left px-4 py-4 font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-pop-green text-black hover:shadow-none dark:bg-white/5 dark:border-white/10 dark:shadow-none dark:text-white dark:rounded-xl"
-          >
-            My Team
-          </button>
-           <button
-            onClick={() => handleNav('saved')}
-             className="text-left px-4 py-4 font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white text-black hover:shadow-none dark:bg-white/5 dark:border-white/10 dark:shadow-none dark:text-white dark:rounded-xl"
-          >
-            Saved Jobs ({savedJobs.size})
           </button>
 
           {currentUser ? (

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Mail, Linkedin } from 'lucide-react';
+import { Mail, Linkedin } from 'lucide-react';
 import { TEAM_DATA } from '../constants';
 
 const Team: React.FC = () => {
@@ -8,15 +8,16 @@ const Team: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-12 py-24 relative z-10">
         <div className="text-center mb-16">
-            <h2 className="text-6xl font-black mb-4 uppercase text-black dark:text-white font-brutal dark:font-sans">The Squad</h2>
-            <p className="text-xl font-bold text-zinc-500 dark:text-zinc-400 dark:font-normal">The brilliant minds building Aspiring Adda.</p>
+            <span className="bg-white dark:bg-[#050508] px-4 text-black dark:text-gray-500 text-sm font-black uppercase tracking-widest border-2 border-black dark:border-white/10 inline-block mb-4 py-1">OUR SQUAD</span>
+            <h2 className="text-6xl font-black mb-4 uppercase text-black dark:text-white font-brutal dark:font-sans">Meet the Team</h2>
+            <p className="text-xl font-bold text-zinc-500 dark:text-zinc-400 dark:font-normal">The brilliant minds and creative souls dedicated to building Aspiring Adda.</p>
         </div>
 
         {/* Mentor */}
         <div className="max-w-3xl mx-auto mb-20 transform hover:scale-105 transition-transform duration-200">
             <div className="card-base p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 bg-white dark:bg-white/5 border-2 border-black dark:border-white/10 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-none relative">
                 <div className="absolute top-0 right-0 p-4">
-                    <span className="bg-neo-yellow dark:bg-nebula-gold/20 text-black dark:text-nebula-gold text-xs font-bold px-3 py-1 border-2 border-black dark:border-nebula-gold uppercase dark:rounded-md">Project Mentor</span>
+                    <span className="bg-neo-yellow dark:bg-nebula-gold/20 text-black dark:text-nebula-gold text-xs font-bold px-3 py-1 border-2 border-black dark:border-nebula-gold uppercase dark:rounded-md">{mentor.role}</span>
                 </div>
 
                 <div className="w-32 h-32 md:w-40 md:h-40 shrink-0 rounded-full border-4 border-black bg-neo-yellow flex items-center justify-center text-black font-black text-6xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-nebula-gold dark:bg-nebula-gold/10 dark:text-nebula-gold dark:shadow-none">
@@ -25,12 +26,9 @@ const Team: React.FC = () => {
 
                 <div className="text-center md:text-left flex-1">
                     <h3 className="font-black text-3xl text-black dark:text-white mb-2 uppercase font-brutal dark:font-sans">{mentor.name}</h3>
-                    <p className="text-zinc-500 font-bold dark:text-gray-400 dark:font-light mb-6 text-lg">Guiding our vision with expertise and leadership.</p>
+                    <p className="text-zinc-500 font-bold dark:text-gray-400 dark:font-light mb-6 text-lg">{mentor.desc}</p>
 
                     <div className="flex flex-col md:flex-row gap-4 md:gap-8 mb-6 text-sm font-bold text-zinc-600 dark:text-gray-300">
-                        <div className="flex items-center justify-center md:justify-start gap-2">
-                            <Phone className="w-4 h-4" /> {mentor.phone}
-                        </div>
                         <div className="flex items-center justify-center md:justify-start gap-2">
                             <Mail className="w-4 h-4" /> <a href={`mailto:${mentor.email}`} className="hover:underline">{mentor.email}</a>
                         </div>

@@ -4,35 +4,36 @@ import { Course, Specialization, DeepDiveData, SoftSkill } from './types';
 export const TEAM_DATA = {
   mentor: {
       name: "Dr. Sayantan Sinha",
-      role: "Project Mentor",
-      phone: "+91 98765 XXXXX",
-      email: "anjali.mentor@example.com",
-      linkedin: "https://linkedin.com",
+      role: "PROJECT MENTOR",
+      phone: "", // Phone removed as per new spec not mentioning it explicitly, or keep empty if not provided
+      email: "sayantan.sinha@gla.ac.in",
+      linkedin: "https://www.linkedin.com/in/dr-sayantan-sinha-1b56a567?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+      desc: "Guiding our vision with expertise and leadership."
   },
   members: [
       {
           name: "Alankrita Pathak",
-          role: "Team Lead",
-          email: "ap@example.com",
-          linkedin: "#",
+          role: "TEAM LEAD",
+          email: "k955776758@gmail.com",
+          linkedin: "https://www.linkedin.com/in/alankrita-pathak-189266397?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
       },
       {
           name: "Saksham Chaturvedi",
-          role: "Team Lead",
+          role: "Developer",
           email: "time62135@gmail.com",
-          linkedin: "#",
+          linkedin: "https://www.linkedin.com/in/saksham-chaturvedi-9974a43a8?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
       },
       {
           name: "Pradyumn Rana",
-          role: "Team Lead",
+          role: "Developer",
           email: "pradyumn2304@gmail.com",
-          linkedin: "#",
+          linkedin: "https://www.linkedin.com/in/pradyumn-rana-81b886383?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
       },
       {
           name: "Krishna Upadhyay",
-          role: "Team Lead",
+          role: "Developer",
           email: "k955776758@gmail.com",
-          linkedin: "#",
+          linkedin: "https://www.linkedin.com/in/krishna-upadhyay-829113384?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
       },
   ]
 };

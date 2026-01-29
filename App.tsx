@@ -20,6 +20,16 @@ const MainContent: React.FC = () => {
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
         if (!isDark) return;
+
+        // Disable 3D tilt on mobile/tablet screens (< 1024px)
+        if (window.innerWidth < 1024) {
+             const cards = document.querySelectorAll('.card-base');
+             cards.forEach((card) => {
+                (card as HTMLElement).style.transform = '';
+             });
+             return;
+        }
+
         const cards = document.querySelectorAll('.card-base');
 
         cards.forEach((card) => {

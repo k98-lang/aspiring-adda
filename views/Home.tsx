@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, Sparkles } from 'lucide-react';
+import { Compass, Sparkles, MessageSquare } from 'lucide-react';
 import Button from '../components/Button';
 import { useApp } from '../AppContext';
 
@@ -14,7 +14,7 @@ const Home: React.FC = () => {
           <div className="absolute bottom-40 right-20 w-40 h-40 bg-pop-green border-2 border-black opacity-80 rotate-12"></div>
       </div>
 
-      <div className="relative z-10 max-w-5xl">
+      <div className="relative z-10 max-w-5xl w-full">
           <div className="inline-flex items-center gap-3 px-4 py-2 border-2 border-black bg-white shadow-[4px_4px_0px_0px_#000] mb-8 dark:bg-white/5 dark:border-white/20 dark:shadow-none dark:rounded-full dark:backdrop-blur-md">
               <span className="w-3 h-3 bg-black dark:bg-nebula-teal rounded-full"></span>
               <span className="text-sm font-bold uppercase tracking-widest text-black dark:text-white">System v2026.1 Online</span>
@@ -50,6 +50,24 @@ const Home: React.FC = () => {
                 <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1 dark:text-gray-400">{stat.label}</p>
               </div>
             ))}
+          </div>
+
+          {/* Review Section */}
+          <div className="mt-20 relative z-10 w-full max-w-4xl mx-auto">
+              <div className="bg-pop-blue/20 dark:bg-white/5 border-2 border-black dark:border-white/10 rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-none backdrop-blur-sm">
+                  <div className="text-left">
+                      <h3 className="text-2xl font-black text-black dark:text-white uppercase font-brutal dark:font-sans mb-2">We value your opinion</h3>
+                      <p className="text-zinc-600 dark:text-gray-400 font-bold dark:font-normal">Help us improve Aspiring Adda by sharing your thoughts.</p>
+                  </div>
+                  <a
+                    href="https://docs.google.com/forms/d/e/1FAIpQLSfmhM2CPcf3tCXeR3XCL8IP7Z1Y_9F35OSuFDMPfnHzflhlDg/viewform"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="whitespace-nowrap px-8 py-3 bg-black text-white font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all dark:bg-nebula-teal dark:text-black dark:border-none dark:shadow-none dark:hover:scale-105 rounded-xl uppercase tracking-wider flex items-center gap-2"
+                  >
+                      <MessageSquare className="w-4 h-4" /> Review Us
+                  </a>
+              </div>
           </div>
       </div>
     </div>
