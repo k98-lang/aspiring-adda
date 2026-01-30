@@ -6,27 +6,31 @@ const Team: React.FC = () => {
   const { mentor, members } = TEAM_DATA;
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-12 py-24 relative z-10">
-        <div className="text-center mb-16">
-            <span className="bg-white dark:bg-[#050508] px-4 text-black dark:text-gray-500 text-sm font-black uppercase tracking-widest border-2 border-black dark:border-white/10 inline-block mb-4 py-1">OUR SQUAD</span>
-            <h2 className="text-6xl font-black mb-4 uppercase text-black dark:text-white font-brutal dark:font-sans">Meet the Team</h2>
-            <p className="text-xl font-bold text-zinc-500 dark:text-zinc-400 dark:font-normal">The brilliant minds and creative souls dedicated to building Aspiring Adda.</p>
+    <div className="max-w-7xl mx-auto px-4 md:px-12 py-24 relative z-10">
+        <div className="text-center mb-12 md:mb-16">
+            <span className="bg-white dark:bg-[#050508] px-4 text-black dark:text-gray-500 text-xs md:text-sm font-black uppercase tracking-widest border-2 border-black dark:border-white/10 inline-block mb-4 py-1">OUR SQUAD</span>
+            <h2 className="text-4xl md:text-6xl font-black mb-4 uppercase text-black dark:text-white font-brutal dark:font-sans">Meet the Team</h2>
+            <p className="text-lg md:text-xl font-bold text-zinc-500 dark:text-zinc-400 dark:font-normal">The brilliant minds and creative souls dedicated to building Aspiring Adda.</p>
         </div>
 
         {/* Mentor */}
-        <div className="max-w-3xl mx-auto mb-20 transform hover:scale-105 transition-transform duration-200">
-            <div className="card-base p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 bg-white dark:bg-white/5 border-2 border-black dark:border-white/10 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-none relative">
-                <div className="absolute top-0 right-0 p-4">
+        <div className="max-w-3xl mx-auto mb-16 md:mb-20 transform md:hover:scale-105 transition-transform duration-200">
+            <div className="card-base p-6 md:p-12 flex flex-col md:flex-row items-center gap-6 md:gap-8 bg-white dark:bg-white/5 border-2 border-black dark:border-white/10 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-none relative">
+                <div className="absolute top-0 right-0 p-4 hidden md:block">
                     <span className="bg-neo-yellow dark:bg-nebula-gold/20 text-black dark:text-nebula-gold text-xs font-bold px-3 py-1 border-2 border-black dark:border-nebula-gold uppercase dark:rounded-md">{mentor.role}</span>
                 </div>
 
-                <div className="w-32 h-32 md:w-40 md:h-40 shrink-0 rounded-full border-4 border-black bg-neo-yellow flex items-center justify-center text-black font-black text-6xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-nebula-gold dark:bg-nebula-gold/10 dark:text-nebula-gold dark:shadow-none">
+                <div className="md:hidden mb-2">
+                     <span className="bg-neo-yellow dark:bg-nebula-gold/20 text-black dark:text-nebula-gold text-xs font-bold px-3 py-1 border-2 border-black dark:border-nebula-gold uppercase dark:rounded-md">{mentor.role}</span>
+                </div>
+
+                <div className="w-24 h-24 md:w-40 md:h-40 shrink-0 rounded-full border-4 border-black bg-neo-yellow flex items-center justify-center text-black font-black text-4xl md:text-6xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-nebula-gold dark:bg-nebula-gold/10 dark:text-nebula-gold dark:shadow-none">
                     {mentor.name.charAt(0)}
                 </div>
 
                 <div className="text-center md:text-left flex-1">
-                    <h3 className="font-black text-3xl text-black dark:text-white mb-2 uppercase font-brutal dark:font-sans">{mentor.name}</h3>
-                    <p className="text-zinc-500 font-bold dark:text-gray-400 dark:font-light mb-6 text-lg">{mentor.desc}</p>
+                    <h3 className="font-black text-2xl md:text-3xl text-black dark:text-white mb-2 uppercase font-brutal dark:font-sans">{mentor.name}</h3>
+                    <p className="text-zinc-500 font-bold dark:text-gray-400 dark:font-light mb-6 text-base md:text-lg">{mentor.desc}</p>
 
                     <div className="flex flex-col md:flex-row gap-4 md:gap-8 mb-6 text-sm font-bold text-zinc-600 dark:text-gray-300">
                         <div className="flex items-center justify-center md:justify-start gap-2">

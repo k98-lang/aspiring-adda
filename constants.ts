@@ -1,4 +1,5 @@
 
+
 import { Course, Specialization, DeepDiveData, SoftSkill } from './types';
 
 export const TEAM_DATA = {
@@ -138,7 +139,10 @@ const generateQuiz = (topic: string) => [
   { q: `Which tool is essential for ${topic}?`, o: ["VS Code", "Excel", "Photoshop", "Compiler"], a: 0 },
   { q: "What is a key concept in this step?", o: ["Modular Design", "Sales Funnel", "Color Theory", "Taxation"], a: 0 },
   { q: "How do you measure success here?", o: ["Efficiency", "Beauty", "Cost", "Volume"], a: 0 },
-  { q: "Which language is most relevant?", o: ["English", "Python/JS", "French", "Binary"], a: 1 }
+  { q: "Which language is most relevant?", o: ["English", "Python/JS", "French", "Binary"], a: 1 },
+  { q: "What is a common pitfall?", o: ["Over-engineering", "Under-sleeping", "Eating too much", "Smiling"], a: 0 },
+  { q: "What helps you improve fast?", o: ["Practice", "Reading only", "Guessing", "Waiting"], a: 0 },
+  { q: "Who uses this skill most?", o: ["Developers", "Chefs", "Pilots", "Doctors"], a: 0 }
 ];
 
 export const DEEP_DIVES: Record<string, DeepDiveData> = {
@@ -183,7 +187,10 @@ export const DEEP_DIVES: Record<string, DeepDiveData> = {
                   { q: "Which tag is used for the largest heading?", o: ["< h6 > ", "< head >", "< h1 >", "< header >"], a: 2 },
                   { q: "What is the box model in CSS?", o: ["Layout Logic", "Padding/Border/Margin", "Flexbox", "Grid"], a: 1 },
                   { q: "Which keyword declares a constant in JS?", o: ["var", "let", "const", "fixed"], a: 2 },
-                  { q: "What is the DOM?", o: ["Data Object Mode", "Document Object Model", "Digital Order Main", "None"], a: 1 }
+                  { q: "What is the DOM?", o: ["Data Object Mode", "Document Object Model", "Digital Order Main", "None"], a: 1 },
+                  { q: "Which symbol creates a template literal?", o: ["'", "\"", "`", "-"], a: 2 },
+                  { q: "What is the correct way to link a CSS file?", o: ["<link>", "<style>", "<css>", "<script>"], a: 0 },
+                  { q: "Which event fires when a user clicks?", o: ["onHover", "onClick", "onPress", "onTap"], a: 1 }
               ]
           },
           {
@@ -192,14 +199,28 @@ export const DEEP_DIVES: Record<string, DeepDiveData> = {
                   { name: "React Official Docs", url: "https://react.dev" },
                   { name: "Tailwind CSS Labs", url: "https://tailwindcss.com/docs" }
               ],
-              quiz: generateQuiz("React")
+              quiz: [
+                 { q: "What is a React Component?", o: ["Function/Class", "Database", "Server", "Loop"], a: 0 },
+                 { q: "How do you manage local state?", o: ["useState", "useEffect", "useRef", "useContext"], a: 0 },
+                 { q: "JSX stands for?", o: ["JS XML", "Java Syntax", "JSON X", "Jira System"], a: 0 },
+                 { q: "What is a prop?", o: ["Argument passed to component", "State", "Hook", "Style"], a: 0 },
+                 { q: "Which hook runs after render?", o: ["useEffect", "useState", "useMemo", "useCallback"], a: 0 },
+                 { q: "What is Tailwind CSS?", o: ["Utility-first framework", "Component library", "JS library", "Database"], a: 0 }
+              ]
           },
           {
             title: "Server Side", desc: "Node.js, Express, REST/GraphQL.", color: "bg-violet-500",
             resources: [
                 { name: "Node.js Crash Course", url: "https://nodejs.org/en/docs/" }
             ],
-            quiz: generateQuiz("Node.js")
+            quiz: [
+                 { q: "What is Node.js?", o: ["Runtime", "Language", "Database", "OS"], a: 0 },
+                 { q: "How do you import modules?", o: ["require()", "include()", "fetch()", "get()"], a: 0 },
+                 { q: "What is NPM?", o: ["Package Manager", "Project Maker", "Node Process", "None"], a: 0 },
+                 { q: "Which module handles file system?", o: ["fs", "http", "path", "os"], a: 0 },
+                 { q: "What does API stand for?", o: ["App Programming Interface", "Apple Pie Inc", "Auto Process Input", "None"], a: 0 },
+                 { q: "What is middleware?", o: ["Fn between req & res", "Database", "Frontend", "Hardware"], a: 0 }
+            ]
           }
       ]
   },

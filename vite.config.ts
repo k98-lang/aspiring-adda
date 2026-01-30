@@ -6,11 +6,15 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   return {
     plugins: [react()],
-    define: {
-      // This shim ensures process.env.API_KEY works in the browser
-      'process.env.API_KEY': JSON.stringify(env.API_KEY),
-      // Prevent other process.env access from crashing
-      'process.env': {}
+    // Proxy API requests to the backend server during development
+    server: {
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3000',
+          changeOrigin: true,
+          secure: false,
+        }
+      }
     },
     build: {
       outDir: 'dist',

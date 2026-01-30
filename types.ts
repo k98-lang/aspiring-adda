@@ -1,3 +1,4 @@
+
 export interface Course {
   id: string;
   name: string;
@@ -78,6 +79,7 @@ export interface Job {
   bg: string;
   logoUrl: string;
   url: string;
+  studyResources?: Resource[];
 }
 
 export interface User {

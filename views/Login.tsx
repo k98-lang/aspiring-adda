@@ -145,21 +145,21 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 relative z-10 pt-24 pb-12">
+    <div className="min-h-screen flex items-center justify-center p-4 md:p-6 relative z-10 pt-24 pb-12">
       <button
         onClick={() => navigate('home')}
-        className="absolute top-24 left-6 md:left-12 flex items-center gap-2 font-bold text-black dark:text-gray-400 hover:text-zinc-600 dark:hover:text-white transition-colors"
+        className="absolute top-24 left-4 md:left-12 flex items-center gap-2 font-bold text-black dark:text-gray-400 hover:text-zinc-600 dark:hover:text-white transition-colors"
       >
         <ArrowLeft className="w-5 h-5" /> Back
       </button>
 
       <div className="card-base w-full max-w-md bg-white dark:bg-[#0a0a0a] overflow-hidden flex flex-col">
         {/* Header Section */}
-        <div className="bg-neo-purple p-8 border-b-2 border-black dark:bg-white/5 dark:border-white/10 text-center">
-            <div className="w-16 h-16 bg-white border-2 border-black rounded-full flex items-center justify-center mx-auto mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-none dark:border-white/20 dark:bg-black">
-                <ShieldCheck className="w-8 h-8 text-black dark:text-nebula-teal" />
+        <div className="bg-neo-purple p-6 md:p-8 border-b-2 border-black dark:bg-white/5 dark:border-white/10 text-center">
+            <div className="w-14 h-14 md:w-16 md:h-16 bg-white border-2 border-black rounded-full flex items-center justify-center mx-auto mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-none dark:border-white/20 dark:bg-black">
+                <ShieldCheck className="w-6 h-6 md:w-8 md:h-8 text-black dark:text-nebula-teal" />
             </div>
-            <h2 className="text-3xl font-black text-black dark:text-white uppercase font-brutal dark:font-sans">
+            <h2 className="text-2xl md:text-3xl font-black text-black dark:text-white uppercase font-brutal dark:font-sans">
                 {authMode === 'signin' ? 'Welcome Back' : 'Join the Club'}
             </h2>
             <p className="text-sm font-bold text-zinc-600 dark:text-gray-400">
@@ -183,7 +183,7 @@ const Login: React.FC = () => {
             </button>
         </div>
 
-        <div className="p-8">
+        <div className="p-6 md:p-8">
             {authMode === 'signup' ? (
                 /* SIGN UP FORM */
                 <form onSubmit={handleSignUp} className="space-y-5">

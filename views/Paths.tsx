@@ -18,17 +18,17 @@ const Paths: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-12 py-32 relative z-10">
+    <div className="max-w-7xl mx-auto px-4 md:px-12 py-24 md:py-32 relative z-10">
       <button
         onClick={() => navigate('explore')}
-        className="mb-12 px-6 py-2 border-2 border-black bg-white shadow-[3px_3px_0px_0px_#000] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[5px_5px_0px_0px_#000] transition-all font-bold flex items-center gap-2 dark:bg-white/5 dark:text-white dark:border-white/10 dark:shadow-none dark:rounded-full dark:hover:bg-white/10"
+        className="mb-8 md:mb-12 px-6 py-2 border-2 border-black bg-white shadow-[3px_3px_0px_0px_#000] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[5px_5px_0px_0px_#000] transition-all font-bold flex items-center gap-2 dark:bg-white/5 dark:text-white dark:border-white/10 dark:shadow-none dark:rounded-full dark:hover:bg-white/10"
       >
         <ArrowLeft className="w-4 h-4" /> Back
       </button>
 
-      <div className="mb-16 p-8 border-2 border-black dark:border-white/10 bg-white dark:bg-white/5 dark:rounded-2xl dark:backdrop-blur-md">
-         <h2 className="text-5xl font-black mb-2 uppercase text-black dark:text-white font-brutal dark:font-sans">{course.name}</h2>
-         <p className="text-xl font-bold text-gray-500 dark:text-gray-400">Found: {paths.length} Tracks</p>
+      <div className="mb-12 md:mb-16 p-6 md:p-8 border-2 border-black dark:border-white/10 bg-white dark:bg-white/5 dark:rounded-2xl dark:backdrop-blur-md">
+         <h2 className="text-3xl md:text-5xl font-black mb-2 uppercase text-black dark:text-white font-brutal dark:font-sans">{course.name}</h2>
+         <p className="text-lg md:text-xl font-bold text-gray-500 dark:text-gray-400">Found: {paths.length} Tracks</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -45,7 +45,7 @@ const Paths: React.FC = () => {
                     </div>
                     <ArrowUpRight className="w-5 h-5 text-black dark:text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-black dark:text-white mb-2 uppercase leading-tight group-hover:underline decoration-2 underline-offset-4 font-brutal dark:font-sans">{s.name}</h3>
+                <h3 className="text-xl md:text-2xl font-bold text-black dark:text-white mb-2 uppercase leading-tight group-hover:underline decoration-2 underline-offset-4 font-brutal dark:font-sans">{s.name}</h3>
             </div>
 
             <div className="mt-8 space-y-3 pt-6 border-t-2 border-dashed border-black dark:border-white/10">

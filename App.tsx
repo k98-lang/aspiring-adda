@@ -90,7 +90,7 @@ const MainContent: React.FC = () => {
   }
 
   return (
-    <main className="flex-grow flex flex-col relative w-full overflow-x-hidden pt-16 min-h-screen">
+    <main className="flex-grow flex flex-col relative w-full overflow-x-hidden pt-20 min-h-screen">
       {content}
     </main>
   );

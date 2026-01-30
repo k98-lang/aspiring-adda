@@ -1,11 +1,11 @@
+
 import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight, Loader2, Lock } from 'lucide-react';
 import { useApp } from '../AppContext';
 import { QUIZ_LEVELS, SPECIALIZATIONS } from '../constants';
 import Button from '../components/Button';
-import { GoogleGenAI } from "@google/genai";
 
-type Stage = 'levels' | 'loading' | 'questions' | 'result';
+type Stage = 'levels' | 'questions' | 'result';
 
 const Quiz: React.FC = () => {
   const { navigate, setSelectedSpecId, lastQuizScore, setLastQuizScore, isDark, currentUser } = useApp();
@@ -17,95 +17,19 @@ const Quiz: React.FC = () => {
   const [resultSpec, setResultSpec] = useState<string | null>(null);
   const [currentScore, setCurrentScore] = useState(0);
 
-  const startLevel = async (lvl: string) => {
+  const startLevel = (lvl: string) => {
       if (!currentUser) {
           navigate('login');
           return;
       }
 
       setLevel(lvl);
-      setStage('loading');
-
-      // Always use AI to generate fresh questions
-      try {
-          await generateAIQuiz(lvl, lastQuizScore);
-      } catch (e) {
-          console.error("AI Quiz Generation Failed, falling back to static", e);
-          setQuestions(QUIZ_LEVELS[lvl]);
-          setStage('questions');
-          setCurrentStep(0);
-          setAnswers([]);
-      }
-  };
-
-  const generateAIQuiz = async (lvl: string, prevScore: number | null) => {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
-      const difficulty = prevScore === null
-        ? "balanced"
-        : prevScore < 50
-            ? "easy"
-            : "hard";
-
-      // We provide the list of specs to the model so it knows valid IDs
-      // Truncate list slightly to ensure we don't overwhelm context
-      const specList = SPECIALIZATIONS.map(s => `${s.id}`).join(',');
-
-      const prompt = `
-          Generate a career quiz for a '${lvl}' user.
-          Difficulty: ${difficulty}.
-
-          TASK: Create EXACTLY 3 multiple-choice questions.
-
-          OUTPUT FORMAT (JSON ONLY):
-          [
-            {
-              "question": "Short question text (max 15 words)",
-              "options": [
-                { "txt": "Short answer (max 6 words)", "spec": "One_ID_From_List", "color": "border-neo-blue" }
-              ]
-            }
-          ]
-
-          RULES:
-          1. Use these IDs for 'spec': ${specList}
-          2. Randomly assign 'color' from: border-neo-blue, border-neo-green, border-neo-yellow, border-neo-rose, border-neo-purple.
-          3. Provide 4 options per question.
-          4. No Markdown. No Code Blocks. Just raw JSON.
-      `;
-
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: prompt,
-        config: {
-            responseMimeType: "application/json",
-            maxOutputTokens: 1000,
-            thinkingConfig: { thinkingBudget: 0 },
-        }
-      });
-
-      if (response.text) {
-          let cleanText = response.text.trim();
-          // Remove markdown code blocks if present
-          cleanText = cleanText.replace(/^```json\s*/, '').replace(/^```\s*/, '').replace(/\s*```$/, '');
-
-          try {
-              const generatedQuestions = JSON.parse(cleanText);
-              if (Array.isArray(generatedQuestions) && generatedQuestions.length > 0) {
-                  setQuestions(generatedQuestions);
-                  setStage('questions');
-                  setCurrentStep(0);
-                  setAnswers([]);
-              } else {
-                  throw new Error("Invalid JSON structure");
-              }
-          } catch (e) {
-              console.error("JSON Parse Error", e);
-              throw new Error("Failed to parse AI response");
-          }
-      } else {
-          throw new Error("Empty AI response");
-      }
+      // Directly load static questions
+      const staticQs = QUIZ_LEVELS[lvl] || QUIZ_LEVELS['beginner'];
+      setQuestions(staticQs);
+      setStage('questions');
+      setCurrentStep(0);
+      setAnswers([]);
   };
 
   const handleAnswer = (specId: string) => {
@@ -159,39 +83,29 @@ const Quiz: React.FC = () => {
       }
   };
 
-  if (stage === 'loading') {
-      return (
-          <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center relative z-10">
-              <Loader2 className="w-12 h-12 text-black dark:text-nebula-teal animate-spin mb-4" />
-              <h3 className="text-xl font-black text-black dark:text-white uppercase">Generating Assessment</h3>
-              <p className="text-zinc-500 font-bold dark:text-gray-400">Creating unique questions using Gemini AI...</p>
-          </div>
-      )
-  }
-
   if (stage === 'levels') {
       return (
-        <div className="max-w-5xl mx-auto px-6 py-32 min-h-screen flex flex-col justify-center text-center relative z-10">
-            <button onClick={() => navigate('home')} className="absolute top-24 left-6 md:left-12 flex items-center gap-2 font-bold text-black dark:text-white hover:underline transition-colors z-10">
+        <div className="max-w-5xl mx-auto px-4 md:px-6 py-24 md:py-32 min-h-screen flex flex-col justify-center text-center relative z-10">
+            <button onClick={() => navigate('home')} className="absolute top-24 left-4 md:left-12 flex items-center gap-2 font-bold text-black dark:text-white hover:underline transition-colors z-10">
                 <ArrowLeft className="w-5 h-5" /> Home
             </button>
 
-            <h2 className="text-7xl font-black text-black dark:text-white mb-4 uppercase font-brutal dark:font-sans">Level Select</h2>
-            <p className="text-xl font-bold text-zinc-500 dark:text-gray-400 dark:font-normal mb-16">Choose your difficulty.</p>
+            <h2 className="text-5xl md:text-7xl font-black text-black dark:text-white mb-4 uppercase font-brutal dark:font-sans">Level Select</h2>
+            <p className="text-lg md:text-xl font-bold text-zinc-500 dark:text-gray-400 dark:font-normal mb-12 md:mb-16">Choose your difficulty.</p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div onClick={() => startLevel('beginner')} className={`card-base p-10 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/10 relative overflow-hidden group`}>
-                    <h3 className="text-3xl font-black mb-2 uppercase text-black dark:text-white font-brutal dark:font-sans">Noob</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                <div onClick={() => startLevel('beginner')} className={`card-base p-8 md:p-10 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/10 relative overflow-hidden group`}>
+                    <h3 className="text-2xl md:text-3xl font-black mb-2 uppercase text-black dark:text-white font-brutal dark:font-sans">Noob</h3>
                     <p className="text-sm font-bold text-black dark:text-gray-400">Just looking around.</p>
                     {!currentUser && <div className="absolute top-4 right-4 text-black/50 dark:text-white/30"><Lock className="w-6 h-6" /></div>}
                 </div>
-                <div onClick={() => startLevel('intermediate')} className={`card-base p-10 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/10 relative overflow-hidden group`}>
-                    <h3 className="text-3xl font-black mb-2 uppercase text-black dark:text-white font-brutal dark:font-sans">Pro</h3>
+                <div onClick={() => startLevel('intermediate')} className={`card-base p-8 md:p-10 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/10 relative overflow-hidden group`}>
+                    <h3 className="text-2xl md:text-3xl font-black mb-2 uppercase text-black dark:text-white font-brutal dark:font-sans">Pro</h3>
                     <p className="text-sm font-bold text-black dark:text-gray-400">Know the basics.</p>
                     {!currentUser && <div className="absolute top-4 right-4 text-black/50 dark:text-white/30"><Lock className="w-6 h-6" /></div>}
                 </div>
-                <div onClick={() => startLevel('advanced')} className={`card-base p-10 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/10 relative overflow-hidden group`}>
-                    <h3 className="text-3xl font-black mb-2 uppercase text-black dark:text-white font-brutal dark:font-sans">God</h3>
+                <div onClick={() => startLevel('advanced')} className={`card-base p-8 md:p-10 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/10 relative overflow-hidden group`}>
+                    <h3 className="text-2xl md:text-3xl font-black mb-2 uppercase text-black dark:text-white font-brutal dark:font-sans">God</h3>
                     <p className="text-sm font-bold text-black dark:text-gray-400">Here to dominate.</p>
                     {!currentUser && <div className="absolute top-4 right-4 text-black/50 dark:text-white/30"><Lock className="w-6 h-6" /></div>}
                 </div>
@@ -207,10 +121,10 @@ const Quiz: React.FC = () => {
   if (stage === 'result' && resultSpec) {
       const spec = SPECIALIZATIONS.find(s => s.id === resultSpec) || SPECIALIZATIONS[0];
       return (
-        <div className="min-h-screen flex items-center justify-center px-6 py-24 relative z-10">
-            <div className={`max-w-xl w-full text-center card-base p-12 ${isDark ? 'bg-white/5' : 'bg-white'}`}>
-                <h2 className="text-5xl font-black text-black dark:text-white mb-4 uppercase font-brutal dark:font-sans">Matched!</h2>
-                <p className="text-xl font-bold mb-10 text-zinc-500 dark:text-gray-400">You belong in <span className="bg-black text-white px-2 dark:bg-nebula-teal dark:text-black font-black">{spec.name}</span>.</p>
+        <div className="min-h-screen flex items-center justify-center px-4 md:px-6 py-24 relative z-10">
+            <div className={`max-w-xl w-full text-center card-base p-8 md:p-12 ${isDark ? 'bg-white/5' : 'bg-white'}`}>
+                <h2 className="text-4xl md:text-5xl font-black text-black dark:text-white mb-4 uppercase font-brutal dark:font-sans">Matched!</h2>
+                <p className="text-lg md:text-xl font-bold mb-10 text-zinc-500 dark:text-gray-400">You belong in <span className="bg-black text-white px-2 dark:bg-nebula-teal dark:text-black font-black">{spec.name}</span>.</p>
                 <div className="space-y-4">
                     <Button fullWidth size="lg" onClick={goToResult}>View Roadmap</Button>
                     <Button fullWidth variant="secondary" onClick={reset}>Retake</Button>
@@ -224,12 +138,12 @@ const Quiz: React.FC = () => {
   const progress = ((currentStep + 1) / questions.length) * 100;
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-32 min-h-screen flex flex-col justify-center relative z-10">
-        <div className="mb-12 border-2 border-black h-4 w-full dark:border-white/20 dark:bg-black/50 dark:rounded-full">
+    <div className="max-w-3xl mx-auto px-4 md:px-6 py-24 md:py-32 min-h-screen flex flex-col justify-center relative z-10">
+        <div className="mb-8 md:mb-12 border-2 border-black h-4 w-full dark:border-white/20 dark:bg-black/50 dark:rounded-full">
             <div className="h-full bg-black transition-all duration-300 dark:bg-nebula-gold dark:rounded-full" style={{ width: `${progress}%` }}></div>
         </div>
 
-        <h2 className="text-4xl md:text-5xl font-black text-black dark:text-white mb-12 leading-tight uppercase animate-in slide-in-from-right-4 fade-in duration-500 key={currentStep} font-brutal dark:font-sans">
+        <h2 className="text-3xl md:text-5xl font-black text-black dark:text-white mb-8 md:mb-12 leading-tight uppercase animate-in slide-in-from-right-4 fade-in duration-500 key={currentStep} font-brutal dark:font-sans">
             {q.question}
         </h2>
 
@@ -239,9 +153,9 @@ const Quiz: React.FC = () => {
                     key={i}
                     onClick={() => handleAnswer(opt.spec)}
                     style={{animationDelay: `${i * 100}ms`}}
-                    className={`w-full text-left p-8 card-base hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all flex items-center justify-between group bg-white dark:bg-white/5 dark:hover:bg-white/10`}
+                    className={`w-full text-left p-6 card-base hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all flex items-center justify-between group bg-white dark:bg-white/5 dark:hover:bg-white/10`}
                 >
-                    <span className="font-bold text-xl text-black dark:text-gray-200 group-hover:dark:text-white">{opt.txt}</span>
+                    <span className="font-bold text-lg text-black dark:text-gray-200 group-hover:dark:text-white">{opt.txt}</span>
                     <ArrowRight className="w-6 h-6 text-black dark:text-white" />
                 </button>
             ))}

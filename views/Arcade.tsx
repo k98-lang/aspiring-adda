@@ -844,27 +844,27 @@ const GameEngineView: React.FC<GameViewProps> = ({ gameId, difficulty, setDiffic
                 border-2 border-black dark:border-${theme}-500/30
                 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-2xl dark:shadow-black/50
                 mx-auto w-full max-w-4xl my-auto
-                aspect-[4/5] md:aspect-[2/1] min-h-[400px]
+                aspect-[2/1]
                 flex flex-col transition-transform duration-100 ${shake ? 'scale-[0.98] animate-glitch' : ''}
             `}>
 
                 {/* Game Layer */}
-                <canvas ref={canvasRef} className="w-full h-full bg-black block object-cover" />
+                <canvas ref={canvasRef} className="w-full h-full bg-black block" />
 
                 {/* HUD (Heads Up Display) */}
                 {(gameState === 'playing' || gameState === 'paused') && (
-                    <div className="absolute top-6 right-6 flex items-center gap-4 text-white font-mono z-10 text-sm">
-                        <div className={`bg-black/60 backdrop-blur px-4 py-2 rounded-lg border border-${theme}-500/30`}>
+                    <div className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-2 md:gap-4 text-white font-mono z-10 text-xs md:text-sm">
+                        <div className={`bg-black/60 backdrop-blur px-2 md:px-4 py-1 md:py-2 rounded-lg border border-${theme}-500/30`}>
                             HI: <span className={`text-${theme}-400 font-bold`}>{highScore}</span>
                         </div>
-                        <div className={`bg-black/60 backdrop-blur px-4 py-2 rounded-lg border border-${theme}-500/30`}>
+                        <div className={`bg-black/60 backdrop-blur px-2 md:px-4 py-1 md:py-2 rounded-lg border border-${theme}-500/30`}>
                             SCORE: <span className="text-white font-bold">{score}</span>
                         </div>
                         <button
                             onClick={togglePause}
-                            className={`w-10 h-10 flex items-center justify-center rounded-lg bg-black/60 backdrop-blur border border-${theme}-500/30 hover:bg-${theme}-900/40 transition`}
+                            className={`w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-lg bg-black/60 backdrop-blur border border-${theme}-500/30 hover:bg-${theme}-900/40 transition`}
                         >
-                            {gameState === 'paused' ? <Play className="w-4 h-4 fill-white" /> : <Pause className="w-4 h-4 fill-white" />}
+                            {gameState === 'paused' ? <Play className="w-3 h-3 md:w-4 md:h-4 fill-white" /> : <Pause className="w-3 h-3 md:w-4 md:h-4 fill-white" />}
                         </button>
                     </div>
                 )}
@@ -872,24 +872,24 @@ const GameEngineView: React.FC<GameViewProps> = ({ gameId, difficulty, setDiffic
                 {/* Start Screen Overlay */}
                 {gameState === 'start' && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/85 backdrop-blur-md z-20 p-4 text-center">
-                        <h2 className="text-4xl md:text-6xl font-black text-white mb-2 italic tracking-tighter" style={{ textShadow: `0 0 20px ${themeColor}` }}>
+                        <h2 className="text-2xl md:text-6xl font-black text-white mb-2 italic tracking-tighter" style={{ textShadow: `0 0 20px ${themeColor}` }}>
                             {gameMeta?.title.toUpperCase()}
                         </h2>
-                        <p className={`text-${theme}-300/80 mb-6 text-xs md:text-sm uppercase tracking-widest`}>
+                        <p className={`text-${theme}-300/80 mb-6 text-[10px] md:text-sm uppercase tracking-widest`}>
                             {gameId === 'runner' ? 'Neon City Dash' : gameId === 'snake' ? 'Matrix Grid Logic' : 'Deep Space Bug Shooter'}
                         </p>
 
                         <DifficultyButtons />
 
-                        <p className="text-zinc-400 mb-8 font-mono text-sm bg-black/50 px-4 py-2 rounded-lg border border-white/5">
+                        <p className="text-zinc-400 mb-8 font-mono text-[10px] md:text-sm bg-black/50 px-4 py-2 rounded-lg border border-white/5">
                             {gameMeta?.controls}
                         </p>
 
                         <button
                             onClick={startGame}
-                            className={`px-10 py-4 bg-${theme}-600 hover:bg-${theme}-500 text-white font-bold rounded-full text-xl shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-105 transition-transform flex items-center gap-2`}
+                            className={`px-6 py-3 md:px-10 md:py-4 bg-${theme}-600 hover:bg-${theme}-500 text-white font-bold rounded-full text-base md:text-xl shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-105 transition-transform flex items-center gap-2`}
                         >
-                            <Play className="w-5 h-5 fill-current" /> START GAME
+                            <Play className="w-4 h-4 md:w-5 md:h-5 fill-current" /> START GAME
                         </button>
                     </div>
                 )}
@@ -897,17 +897,17 @@ const GameEngineView: React.FC<GameViewProps> = ({ gameId, difficulty, setDiffic
                 {/* Pause Overlay */}
                 {gameState === 'paused' && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm z-20">
-                        <h2 className="text-5xl font-black text-white mb-6 tracking-tight">PAUSED</h2>
+                        <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">PAUSED</h2>
                         <div className="flex gap-4">
                             <button
                                 onClick={togglePause}
-                                className={`px-8 py-3 bg-white text-black font-bold rounded-xl hover:scale-105 transition-transform`}
+                                className={`px-6 py-2 md:px-8 md:py-3 bg-white text-black font-bold rounded-xl hover:scale-105 transition-transform text-sm md:text-base`}
                             >
                                 RESUME
                             </button>
                             <button
                                 onClick={onExit}
-                                className={`px-8 py-3 bg-zinc-800 text-white font-bold rounded-xl hover:bg-zinc-700 transition-colors`}
+                                className={`px-6 py-2 md:px-8 md:py-3 bg-zinc-800 text-white font-bold rounded-xl hover:bg-zinc-700 transition-colors text-sm md:text-base`}
                             >
                                 EXIT
                             </button>
@@ -918,29 +918,29 @@ const GameEngineView: React.FC<GameViewProps> = ({ gameId, difficulty, setDiffic
                 {/* Game Over Overlay */}
                 {gameState === 'gameover' && (
                     <div className={`absolute inset-0 flex flex-col items-center justify-center bg-black/85 backdrop-blur-md z-20 animate-in fade-in duration-500 ${shake ? 'shadow-[inset_0_0_100px_rgba(220,38,38,0.5)]' : ''}`}>
-                        <h2 className="text-6xl font-black text-white mb-2 italic tracking-tighter text-red-500 animate-pulse" style={{ textShadow: '0 0 30px red' }}>
+                        <h2 className="text-4xl md:text-6xl font-black text-white mb-2 italic tracking-tighter text-red-500 animate-pulse" style={{ textShadow: '0 0 30px red' }}>
                             GAME OVER
                         </h2>
-                        <p className={`text-${theme}-300/80 mb-6 text-sm uppercase tracking-widest`}>
+                        <p className={`text-${theme}-300/80 mb-6 text-xs md:text-sm uppercase tracking-widest`}>
                             Mission Failed
                         </p>
 
                         <div className="text-center mb-8 p-4 bg-white/5 rounded-2xl border border-white/10 transform transition-all hover:scale-105">
-                            <p className="text-xl font-bold text-white mb-1">SCORE: <span className="text-white text-3xl block mt-1">{score}</span></p>
+                            <p className="text-lg md:text-xl font-bold text-white mb-1">SCORE: <span className="text-white text-2xl md:text-3xl block mt-1">{score}</span></p>
                             <div className="w-full h-px bg-white/10 my-3"></div>
-                            <p className={`text-sm text-${theme}-400 font-mono`}>HIGH SCORE: {highScore}</p>
+                            <p className={`text-xs md:text-sm text-${theme}-400 font-mono`}>HIGH SCORE: {highScore}</p>
                         </div>
 
                         <div className="flex gap-4">
                             <button
                                 onClick={startGame}
-                                className={`px-8 py-3 bg-${theme}-600 hover:bg-${theme}-500 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-105 transition-transform flex items-center gap-2`}
+                                className={`px-6 py-3 md:px-8 md:py-3 bg-${theme}-600 hover:bg-${theme}-500 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-105 transition-transform flex items-center gap-2 text-sm md:text-base`}
                             >
-                                <RotateCcw className="w-5 h-5" /> REPLAY
+                                <RotateCcw className="w-4 h-4 md:w-5 md:h-5" /> REPLAY
                             </button>
                              <button
                                 onClick={onExit}
-                                className={`px-8 py-3 bg-zinc-800 text-white font-bold rounded-xl hover:bg-zinc-700 transition-colors`}
+                                className={`px-6 py-3 md:px-8 md:py-3 bg-zinc-800 text-white font-bold rounded-xl hover:bg-zinc-700 transition-colors text-sm md:text-base`}
                             >
                                 EXIT
                             </button>
