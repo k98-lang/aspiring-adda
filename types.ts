@@ -89,7 +89,9 @@ export interface User {
 export interface AIRoadmapStep {
   title: string;
   desc: string;
-  resources: { name: string; url: string }[];
+  duration?: string;
+  topics?: string[];
+  resources: any[];
 }
 
 export interface AIRoadmap {
@@ -99,6 +101,7 @@ export interface AIRoadmap {
   goal: string;
   steps: AIRoadmapStep[];
   level: number;
+  progress_level?: number;
   created_at: string;
 }
 

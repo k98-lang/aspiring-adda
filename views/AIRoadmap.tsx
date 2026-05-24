@@ -127,8 +127,16 @@ const AIRoadmap: React.FC = () => {
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!role.trim()) {
-      setError('Please specify a career goal or job role.');
+    
+    // Sanitize and validate role input
+    const cleanRole = role.trim().replace(/[<>{}]/g, '');
+    if (!cleanRole) {
+      setError('Please specify a valid career goal or job role.');
+      return;
+    }
+
+    if (cleanRole.length > 100) {
+      setError('Role description is too long (maximum 100 characters).');
       return;
     }
 
@@ -136,7 +144,7 @@ const AIRoadmap: React.FC = () => {
     setError('');
     setWarningMsg('');
 
-    const promptText = `You are a world-class engineering career coach. Generate a high-yield, step-by-step developer roadmap for the role: "${role}".
+    const promptText = `You are a world-class engineering career coach. Generate a high-yield, step-by-step developer roadmap for the role: "${cleanRole}".
 User profile:
 - Experience Level: ${level}
 - Timeframe target: ${timeframe}
@@ -219,7 +227,7 @@ Provide exactly 4 to 6 steps showing a logical learning curve from basic to adva
 
       // Save to database/state
       const savedId = await saveAIRoadmap(parsedRoadmap.title, parsedRoadmap.goal, parsedRoadmap.steps);
-      setSelectedAiRoadmapId(savedId);
+      setSelectedAiRoadmapId(savedId || null);
       setActiveStepIndex(0);
 
     } catch (err: any) {
@@ -231,10 +239,10 @@ Provide exactly 4 to 6 steps showing a logical learning curve from basic to adva
       // Wait 1.5 seconds to simulate engine compile for UI impact
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      const mockData = generateMockRoadmap(role, timeframe, level, commitment);
+      const mockData = generateMockRoadmap(cleanRole, timeframe, level, commitment);
       const savedId = await saveAIRoadmap(mockData.title, mockData.goal, mockData.steps);
       
-      setSelectedAiRoadmapId(savedId);
+      setSelectedAiRoadmapId(savedId || null);
       setActiveStepIndex(0);
     } finally {
       setLoading(false);
@@ -279,7 +287,7 @@ Provide exactly 4 to 6 steps showing a logical learning curve from basic to adva
   // ==========================================
   if (activeRoadmap) {
     const totalSteps = activeRoadmap.steps.length;
-    const progressLevel = activeRoadmap.progress_level || 0;
+    const progressLevel = activeRoadmap.level || 0;
     const percent = Math.min(100, Math.round((progressLevel / totalSteps) * 100));
 
     const handleStepToggle = async (stepIdx: number) => {
@@ -492,13 +500,13 @@ Provide exactly 4 to 6 steps showing a logical learning curve from basic to adva
                       </h4>
                       <div className="flex flex-col gap-2">
                         {step.resources?.map((res, rIdx) => {
-                          const searchQuery = encodeURIComponent(`${step.title} ${res} tutorial guides`);
-                          const searchUrl = `https://www.google.com/search?q=${searchQuery}`;
+                          const resourceName = typeof res === 'object' && res !== null ? (res.name || res.title || 'Resource Link') : String(res);
+                          const resourceUrl = typeof res === 'object' && res !== null && res.url ? res.url : `https://www.google.com/search?q=${encodeURIComponent(`${step.title} ${resourceName} tutorial guides`)}`;
 
                           return (
                             <a
                               key={rIdx}
-                              href={searchUrl}
+                              href={resourceUrl}
                               target="_blank"
                               rel="noreferrer"
                               className="p-3 border-2 border-black hover:border-blue-600 bg-white hover:bg-zinc-50 dark:border-white/10 dark:bg-zinc-950 dark:hover:bg-white/5 rounded-xl flex items-center justify-between transition-all group"
@@ -508,7 +516,7 @@ Provide exactly 4 to 6 steps showing a logical learning curve from basic to adva
                                   <BookOpen className="w-4 h-4" />
                                 </div>
                                 <span className="text-xs font-bold text-zinc-800 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-nebula-teal transition-colors">
-                                  {res}
+                                  {resourceName}
                                 </span>
                               </div>
                               <ExternalLink className="w-3.5 h-3.5 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-nebula-teal shrink-0" />

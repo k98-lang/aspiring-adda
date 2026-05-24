@@ -5,11 +5,19 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
     console.error(
-        '[Supabase] Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY in .env.local'
+        '[Supabase] Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY in environment'
     );
 }
 
 export const supabase = createClient(
     supabaseUrl ?? '',
-    supabaseAnonKey ?? ''
+    supabaseAnonKey ?? '',
+    {
+        auth: {
+            flowType: 'pkce', // Proof Key for Code Exchange (more secure flow)
+            autoRefreshToken: true,
+            persistSession: true,
+            detectSessionInUrl: true
+        }
+    }
 );

@@ -217,7 +217,7 @@ const Dashboard: React.FC = () => {
               ) : (
                 <div className="flex flex-col gap-4">
                   {aiRoadmaps.map((map) => {
-                    const progressLevel = map.progress_level || 0;
+                    const progressLevel = map.level || 0;
                     const totalSteps = map.steps.length;
                     const percent = Math.min(100, Math.round((progressLevel / totalSteps) * 100));
                     
@@ -316,7 +316,7 @@ const Dashboard: React.FC = () => {
                     const spec = SPECIALIZATIONS.find(s => s.id === specId);
                     if (!spec) return null;
 
-                    const totalSteps = DEEP_DIVES[specId]?.steps?.length || 5;
+                    const totalSteps = DEEP_DIVES[specId]?.roadmap?.length || 5;
                     const percent = Math.min(100, Math.round((level / totalSteps) * 100));
 
                     return (

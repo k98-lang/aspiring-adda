@@ -34,7 +34,7 @@ interface AppContextType {
   setLastQuizScore: (score: number) => void;
   navigate: (view: ViewState, params?: any) => void;
   aiRoadmaps: AIRoadmap[];
-  saveAIRoadmap: (title: string, goal: string, steps: AIRoadmapStep[]) => Promise<void>;
+  saveAIRoadmap: (title: string, goal: string, steps: AIRoadmapStep[]) => Promise<string | undefined>;
   updateAIRoadmapLevel: (id: string, level: number) => Promise<void>;
   deleteAIRoadmap: (id: string) => Promise<void>;
 }
@@ -140,7 +140,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
-  const saveAIRoadmap = async (title: string, goal: string, steps: AIRoadmapStep[]) => {
+  const saveAIRoadmap = async (title: string, goal: string, steps: AIRoadmapStep[]): Promise<string | undefined> => {
     const { data: { session } } = await supabase.auth.getSession();
     const userId = session?.user?.id;
     if (!userId) return;
@@ -164,6 +164,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     if (data) {
       setAiRoadmaps(prev => [data as AIRoadmap, ...prev]);
+      return (data as AIRoadmap).id;
     }
   };
 

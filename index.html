@@ -2,7 +2,11 @@
 <html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Security: CSP Meta Tag fallback -->
+    <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none';">
+    
     <title>Aspiring Adda | Career Pathways 2026</title>
     
     <!-- Fonts -->
@@ -12,7 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Tailwind CDN (kept for simplicity, though a build step is preferred for prod) -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com" crossorigin="anonymous"></script>
     <script>
       tailwind.config = {
         darkMode: 'class',
