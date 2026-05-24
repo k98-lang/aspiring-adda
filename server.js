@@ -6,6 +6,8 @@ import { fileURLToPath } from 'url';
 import { GoogleGenAI } from '@google/genai';
 
 dotenv.config();
+// Load .env.local fallback for local development
+dotenv.config({ path: '.env.local' });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,8 +17,9 @@ app.use(cors());
 app.use(express.json());
 
 // Initialize Google GenAI (Server Side Only)
-// The API KEY is loaded from process.env.API_KEY on the server
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Try standard API_KEY first, fallback to GEMINI_API_KEY
+const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || 'PLACEHOLDER_API_KEY';
+const ai = new GoogleGenAI({ apiKey });
 
 // API Endpoint: Proxy for Gemini Generation
 app.post('/api/generate', async (req, res) => {

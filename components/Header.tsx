@@ -12,6 +12,7 @@ const Header: React.FC = () => {
     { id: 'jobs', label: 'Jobs' },
     { id: 'soft-skills', label: 'Skills' },
     { id: 'guidance', label: 'Guide' },
+    ...(currentUser ? [{ id: 'dashboard', label: 'Dashboard' }] : []),
     { id: 'team', label: 'My Team' }
   ];
 
@@ -94,6 +95,9 @@ const Header: React.FC = () => {
                     <p className="text-xs font-bold text-gray-500 uppercase">Signed in as</p>
                     <p className="text-sm font-black truncate dark:text-white">{currentUser.email}</p>
                   </div>
+                  <button onClick={() => { navigate('dashboard'); setProfileOpen(false); }} className="w-full text-left p-3 hover:bg-zinc-50 dark:hover:bg-white/5 text-black dark:text-white font-bold text-sm flex items-center gap-2 border-b-2 border-black/10 dark:border-white/10">
+                    <UserIcon className="w-4.5 h-4.5" /> My Dashboard
+                  </button>
                   <button onClick={() => { logout(); setProfileOpen(false); }} className="w-full text-left p-3 hover:bg-red-50 dark:hover:bg-white/5 text-red-500 font-bold text-sm flex items-center gap-2">
                     <LogOut className="w-4 h-4" /> Logout
                   </button>

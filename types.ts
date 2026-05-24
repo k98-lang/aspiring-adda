@@ -86,4 +86,20 @@ export interface User {
   isAuthenticated: boolean;
 }
 
-export type ViewState = 'home' | 'explore' | 'paths' | 'detail' | 'jobs' | 'saved' | 'quiz' | 'team' | 'soft-skills' | 'login' | 'arcade' | 'guidance';
+export interface AIRoadmapStep {
+  title: string;
+  desc: string;
+  resources: { name: string; url: string }[];
+}
+
+export interface AIRoadmap {
+  id: string;
+  user_id: string;
+  title: string;
+  goal: string;
+  steps: AIRoadmapStep[];
+  level: number;
+  created_at: string;
+}
+
+export type ViewState = 'home' | 'explore' | 'paths' | 'detail' | 'jobs' | 'saved' | 'quiz' | 'team' | 'soft-skills' | 'login' | 'arcade' | 'guidance' | 'dashboard' | 'ai-roadmap';

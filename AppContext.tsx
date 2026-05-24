@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { ViewState, User } from './types';
+import { ViewState, User, AIRoadmap, AIRoadmapStep } from './types';
 import { supabase } from './lib/supabase';
 
 interface AppContextType {
@@ -16,6 +16,8 @@ interface AppContextType {
   setSelectedSpecId: (id: string | null) => void;
   selectedSoftSkillId: string | null;
   setSelectedSoftSkillId: (id: string | null) => void;
+  selectedAiRoadmapId: string | null;
+  setSelectedAiRoadmapId: (id: string | null) => void;
   savedJobs: Set<string>;
   toggleSaveJob: (id: string) => void;
   userSkills: Set<string>;
@@ -31,6 +33,10 @@ interface AppContextType {
   lastQuizScore: number | null;
   setLastQuizScore: (score: number) => void;
   navigate: (view: ViewState, params?: any) => void;
+  aiRoadmaps: AIRoadmap[];
+  saveAIRoadmap: (title: string, goal: string, steps: AIRoadmapStep[]) => Promise<void>;
+  updateAIRoadmapLevel: (id: string, level: number) => Promise<void>;
+  deleteAIRoadmap: (id: string) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -43,10 +49,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
   const [selectedSpecId, setSelectedSpecId] = useState<string | null>(null);
   const [selectedSoftSkillId, setSelectedSoftSkillId] = useState<string | null>(null);
+  const [selectedAiRoadmapId, setSelectedAiRoadmapId] = useState<string | null>(null);
 
   const [savedJobs, setSavedJobs] = useState<Set<string>>(new Set());
   const [userSkills, setUserSkills] = useState<Set<string>>(new Set());
   const [roadmapProgress, setRoadmapProgress] = useState<Record<string, number>>({});
+  const [aiRoadmaps, setAiRoadmaps] = useState<AIRoadmap[]>([]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [jobFilter, setJobFilter] = useState('All');
@@ -85,6 +93,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setCurrentUser(null);
         setSavedJobs(new Set());
         setRoadmapProgress({});
+        setAiRoadmaps([]);
       }
     });
 
@@ -114,6 +123,76 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       progressData.forEach(row => { progressMap[row.spec_id] = row.level; });
       setRoadmapProgress(progressMap);
     }
+
+    // Load AI roadmaps
+    loadAIRoadmaps(userId);
+  };
+
+  const loadAIRoadmaps = async (userId: string) => {
+    const { data } = await supabase
+      .from('ai_roadmaps')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (data) {
+      setAiRoadmaps(data as AIRoadmap[]);
+    }
+  };
+
+  const saveAIRoadmap = async (title: string, goal: string, steps: AIRoadmapStep[]) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const userId = session?.user?.id;
+    if (!userId) return;
+
+    const { data, error } = await supabase
+      .from('ai_roadmaps')
+      .insert({
+        user_id: userId,
+        title,
+        goal,
+        steps,
+        level: 0
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error saving AI roadmap:', error);
+      return;
+    }
+
+    if (data) {
+      setAiRoadmaps(prev => [data as AIRoadmap, ...prev]);
+    }
+  };
+
+  const updateAIRoadmapLevel = async (id: string, level: number) => {
+    const { error } = await supabase
+      .from('ai_roadmaps')
+      .update({ level })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error updating AI roadmap progress:', error);
+      return;
+    }
+
+    setAiRoadmaps(prev => prev.map(r => r.id === id ? { ...r, level } : r));
+  };
+
+  const deleteAIRoadmap = async (id: string) => {
+    const { error } = await supabase
+      .from('ai_roadmaps')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting AI roadmap:', error);
+      return;
+    }
+
+    setAiRoadmaps(prev => prev.filter(r => r.id !== id));
   };
 
   // ─── Auth Methods ────────────────────────────────────────────
@@ -127,6 +206,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setCurrentUser(null);
     setSavedJobs(new Set());
     setRoadmapProgress({});
+    setAiRoadmaps([]);
     setView('home');
   };
 
@@ -190,11 +270,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (params.courseId) setSelectedCourseId(params.courseId);
     if (params.specId) setSelectedSpecId(params.specId);
     if (params.softSkillId) setSelectedSoftSkillId(params.softSkillId);
+    if (params.aiRoadmapId) setSelectedAiRoadmapId(params.aiRoadmapId);
 
-    if (newView === 'home') {
+    if (newView === 'home' || newView === 'dashboard') {
       setSelectedCourseId(null);
       setSelectedSpecId(null);
       setSelectedSoftSkillId(null);
+      setSelectedAiRoadmapId(null);
     }
   };
 
@@ -206,6 +288,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       selectedCourseId, setSelectedCourseId,
       selectedSpecId, setSelectedSpecId,
       selectedSoftSkillId, setSelectedSoftSkillId,
+      selectedAiRoadmapId, setSelectedAiRoadmapId,
       savedJobs, toggleSaveJob,
       userSkills, toggleUserSkill,
       roadmapProgress, updateRoadmapProgress,
@@ -213,7 +296,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       jobFilter, setJobFilter,
       locationFilter, setLocationFilter,
       lastQuizScore, setLastQuizScore,
-      navigate
+      navigate,
+      aiRoadmaps, saveAIRoadmap, updateAIRoadmapLevel, deleteAIRoadmap
     }}>
       {children}
     </AppContext.Provider>

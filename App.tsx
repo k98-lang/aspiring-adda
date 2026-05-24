@@ -13,6 +13,8 @@ import Quiz from './views/Quiz';
 import Login from './views/Login';
 import Arcade from './views/Arcade';
 import Guidance from './views/Guidance';
+import Dashboard from './views/Dashboard';
+import AIRoadmap from './views/AIRoadmap';
 
 const MainContent: React.FC = () => {
   const { view, isDark } = useApp();
@@ -83,6 +85,8 @@ const MainContent: React.FC = () => {
     case 'login': content = <Login />; break;
     case 'arcade': content = <Arcade />; break;
     case 'guidance': content = <Guidance />; break;
+    case 'dashboard': content = <Dashboard />; break;
+    case 'ai-roadmap': content = <AIRoadmap />; break;
     default: content = <Home />;
   }
 

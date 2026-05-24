@@ -77,7 +77,7 @@ const Login: React.FC = () => {
                 setError(signInError.message);
             }
         } else {
-            navigate('home');
+            navigate('dashboard');
         }
         setLoading(false);
     };
