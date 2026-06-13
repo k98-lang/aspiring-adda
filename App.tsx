@@ -21,55 +21,99 @@ const MainContent: React.FC = () => {
 
   // Add 3D Tilt Effect
   useEffect(() => {
+    let activeCard: HTMLElement | null = null;
+
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDark) return;
 
       // Disable 3D tilt on mobile/tablet screens (< 1024px)
       if (window.innerWidth < 1024) {
-        const cards = document.querySelectorAll('.card-base');
-        cards.forEach((card) => {
-          (card as HTMLElement).style.transform = '';
-        });
+        if (activeCard) {
+          activeCard.style.transform = '';
+          activeCard.style.transition = '';
+          activeCard = null;
+        }
         return;
       }
 
-      const cards = document.querySelectorAll('.card-base');
+      // Find the card being hovered
+      const target = e.target as HTMLElement;
+      const card = target.closest('.card-base') as HTMLElement | null;
 
-      cards.forEach((card) => {
+      // If we moved out of the previously active card, reset its transform
+      if (activeCard && activeCard !== card) {
+        activeCard.style.transform = '';
+        activeCard.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+        activeCard.style.removeProperty('--mouse-x');
+        activeCard.style.removeProperty('--mouse-y');
+        activeCard = null;
+      }
+
+      if (card) {
+        activeCard = card;
         const rect = card.getBoundingClientRect();
+        
+        // Mouse positions relative to the card
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
         const centerX = rect.width / 2;
         const centerY = rect.height / 2;
 
-        const rotateX = ((y - centerY) / centerY) * -5; // Max 5 deg
-        const rotateY = ((x - centerX) / centerX) * 5;  // Max 5 deg
+        // Calculate rotation angles (clamped to max 8 degrees)
+        const maxRotation = 8;
+        const rotateX = Math.max(-maxRotation, Math.min(maxRotation, ((y - centerY) / centerY) * -maxRotation));
+        const rotateY = Math.max(-maxRotation, Math.min(maxRotation, ((x - centerX) / centerX) * maxRotation));
 
-        // Cast to HTMLElement to access style
-        (card as HTMLElement).style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-      });
+        // Use a very fast transition during mousemove to feel snappy but smooth out jitter
+        card.style.transition = 'transform 0.1s ease-out';
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        
+        // Set CSS custom properties for the spotlight reflection effect
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      }
+    };
+
+    const handleMouseLeave = () => {
+      if (activeCard) {
+        activeCard.style.transform = '';
+        activeCard.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+        activeCard.style.removeProperty('--mouse-x');
+        activeCard.style.removeProperty('--mouse-y');
+        activeCard = null;
+      }
     };
 
     if (isDark) {
       window.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseleave', handleMouseLeave);
     } else {
-      // Reset transforms when in light mode
+      // Reset all cards' transforms when in light mode
       const cards = document.querySelectorAll('.card-base');
       cards.forEach((card) => {
-        (card as HTMLElement).style.transform = '';
+        const c = card as HTMLElement;
+        c.style.transform = '';
+        c.style.transition = '';
+        c.style.removeProperty('--mouse-x');
+        c.style.removeProperty('--mouse-y');
       });
     }
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseleave', handleMouseLeave);
       // Clean up transforms to prevent stuck tilt
       const cards = document.querySelectorAll('.card-base');
       cards.forEach((card) => {
-        (card as HTMLElement).style.transform = '';
+        const c = card as HTMLElement;
+        c.style.transform = '';
+        c.style.transition = '';
+        c.style.removeProperty('--mouse-x');
+        c.style.removeProperty('--mouse-y');
       });
     };
-  }, [isDark, view]); // Re-run when view changes to attach to new cards
+  }, [isDark]); // No need to depend on view anymore, as event delegation handles dynamic elements
 
   let content;
   switch (view) {

@@ -15,60 +15,7 @@
     <!-- Space Grotesk (Light Mode) & Outfit (Dark Mode) -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CDN (kept for simplicity, though a build step is preferred for prod) -->
-    <script src="https://cdn.tailwindcss.com" crossorigin="anonymous"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Outfit', 'sans-serif'], // Dark Mode
-              brutal: ['Space Grotesk', 'sans-serif'], // Light Mode
-            },
-            animation: {
-              'nebula-float': 'nebula 20s infinite alternate',
-              'twinkle': 'twinkle 4s infinite ease-in-out',
-            },
-            keyframes: {
-              nebula: {
-                '0%': { transform: 'translate(0, 0) scale(1)' },
-                '100%': { transform: 'translate(30px, -20px) scale(1.1)' },
-              },
-              twinkle: {
-                '0%, 100%': { opacity: 0.4 },
-                '50%': { opacity: 1 },
-              }
-            },
-            colors: {
-              // LIGHT MODE PALETTE
-              'pop-yellow': '#FFD600',
-              'pop-purple': '#D6BCFA',
-              'pop-green': '#9AE6B4',
-              'pop-blue': '#90CDF4',
-              'pop-pink': '#FEB2B2',
-              
-              // DARK MODE PALETTE (Nebula inspired)
-              'space-black': '#050508',
-              'nebula-gold': '#d4a353',
-              'nebula-teal': '#2dd4bf',
-              'nebula-void': '#0f172a',
-              
-              // Map legacy names to new palette to prevent breaks if used elsewhere
-              'neo-yellow': '#FFD600',
-              'neo-purple': '#D6BCFA',
-              'neo-green': '#9AE6B4',
-              'neo-rose': '#FEB2B2',
-              'neo-blue': '#90CDF4',
-              linkedin: {
-                  800: '#0a66c2',
-                  700: '#004182'
-               }
-            }
-          }
-        }
-      }
-    </script>
+    <!-- Local Tailwind CSS is compiled via PostCSS and imported in index.tsx -->
     <style>
       /* --- GLOBAL --- */
       body {
@@ -162,24 +109,32 @@
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
         transform-style: preserve-3d;
-        transition: transform 0.1s ease-out;
+        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
         position: relative;
         overflow: hidden;
       }
 
-      /* Glossy Reflection overlay */
+      /* Glossy Spotlight overlay (Glow follows cursor) */
       .dark .card-base::before {
         content: "";
         position: absolute;
         inset: 0;
-        background: linear-gradient(125deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 40%);
-        opacity: 0.4;
+        background: radial-gradient(
+          350px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+          rgba(255, 255, 255, 0.08),
+          transparent 80%
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease;
         pointer-events: none;
         z-index: 2;
       }
 
+      .dark .card-base:hover::before {
+        opacity: 1;
+      }
+
       .dark .card-base:hover {
-        transform: none;
         border-color: rgba(212, 163, 83, 0.4); /* Nebula Gold */
         box-shadow: 0 0 30px rgba(45, 212, 191, 0.15); /* Nebula Teal */
       }
@@ -217,7 +172,6 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
 </head>
   <body class="transition-colors duration-500 min-h-screen flex flex-col font-brutal dark:font-sans no-tap-highlight selection:bg-black selection:text-pop-yellow dark:selection:bg-nebula-teal dark:selection:text-black overflow-x-hidden">
     
@@ -234,6 +188,5 @@
 
     <div id="root" class="flex flex-col min-h-screen w-full relative z-10"></div>
     <script type="module" src="./index.tsx"></script>
-  <script type="module" src="/index.tsx"></script>
 </body>
 </html>
